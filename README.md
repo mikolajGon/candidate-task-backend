@@ -51,7 +51,7 @@ Design the system architecture for the backend considering the following factors
 Document your system design decisions, explaining the rationale behind your choices and how they address the requirements and constraints of the problem.
 
 ## Coding Task:
-Implement the backend in one of the following languages: PHP, Node.js (TypeScript), or Go. 
+Implement a proof of concept the backend in one of the following languages: PHP, Node.js (TypeScript), or Go. 
 You can use any framework or library you deem suitable for the task.
 The system should allow to: 
 
@@ -59,6 +59,7 @@ The system should allow to:
 * Translate one guide to one or more languages
 
 ### Notes
+* The coding task is only a proof of concept, so simplifications to the original design will be accepted.
 * Feel free to mock any external service (e.g. storage, translation service).
 * Assume the host of the translation service is a configuration of the system.
 
