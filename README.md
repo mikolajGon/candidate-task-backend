@@ -1,65 +1,73 @@
-# Senior Backend Engineer Assessment Task
+<p align="center">
+  <a href="http://nestjs.com/" target="blank"><img src="https://nestjs.com/img/logo-small.svg" width="200" alt="Nest Logo" /></a>
+</p>
 
-## Task Overview:
-You are tasked with designing and implementing the backend for a software product that stores guides. 
-A guide is composed of a title and an ordered list of steps. Each step consists of a title and textual content. 
-Guides can be stored in multiple languages defined by the user. 
-The goal is to provide the ability to automatically translate guides into other languages using a separate translation service.
+[circleci-image]: https://img.shields.io/circleci/build/github/nestjs/nest/master?token=abc123def456
+[circleci-url]: https://circleci.com/gh/nestjs/nest
 
-## Requirements:
-* The system should allow users to specify the languages in which they want a guide to be translated. 
-* Upon request, the system should interact with the translation service to retrieve translations for each step of the guide and store them accordingly. 
-* The system should handle error cases gracefully and ensure the translated content is properly associated with the original guide.
-* The system should allow users to translate a guide to multiple languages in one single interaction. 
+  <p align="center">A progressive <a href="http://nodejs.org" target="_blank">Node.js</a> framework for building efficient and scalable server-side applications.</p>
+    <p align="center">
+<a href="https://www.npmjs.com/~nestjscore" target="_blank"><img src="https://img.shields.io/npm/v/@nestjs/core.svg" alt="NPM Version" /></a>
+<a href="https://www.npmjs.com/~nestjscore" target="_blank"><img src="https://img.shields.io/npm/l/@nestjs/core.svg" alt="Package License" /></a>
+<a href="https://www.npmjs.com/~nestjscore" target="_blank"><img src="https://img.shields.io/npm/dm/@nestjs/common.svg" alt="NPM Downloads" /></a>
+<a href="https://circleci.com/gh/nestjs/nest" target="_blank"><img src="https://img.shields.io/circleci/build/github/nestjs/nest/master" alt="CircleCI" /></a>
+<a href="https://coveralls.io/github/nestjs/nest?branch=master" target="_blank"><img src="https://coveralls.io/repos/github/nestjs/nest/badge.svg?branch=master#9" alt="Coverage" /></a>
+<a href="https://discord.gg/G7Qnnhy" target="_blank"><img src="https://img.shields.io/badge/discord-online-brightgreen.svg" alt="Discord"/></a>
+<a href="https://opencollective.com/nest#backer" target="_blank"><img src="https://opencollective.com/nest/backers/badge.svg" alt="Backers on Open Collective" /></a>
+<a href="https://opencollective.com/nest#sponsor" target="_blank"><img src="https://opencollective.com/nest/sponsors/badge.svg" alt="Sponsors on Open Collective" /></a>
+  <a href="https://paypal.me/kamilmysliwiec" target="_blank"><img src="https://img.shields.io/badge/Donate-PayPal-ff3f59.svg"/></a>
+    <a href="https://opencollective.com/nest#sponsor"  target="_blank"><img src="https://img.shields.io/badge/Support%20us-Open%20Collective-41B883.svg" alt="Support us"></a>
+  <a href="https://twitter.com/nestframework" target="_blank"><img src="https://img.shields.io/twitter/follow/nestframework.svg?style=social&label=Follow"></a>
+</p>
+  <!--[![Backers on Open Collective](https://opencollective.com/nest/backers/badge.svg)](https://opencollective.com/nest#backer)
+  [![Sponsors on Open Collective](https://opencollective.com/nest/sponsors/badge.svg)](https://opencollective.com/nest#sponsor)-->
 
-## Translation API Description:
-The translation API exposes a POST endpoint (`/v1/auto-translate`) to translate a JSON object passed in the body. 
+## Description
 
-The body is a JSON object with the following fields: 
-* `original_language`: the language of the passed text
-* `language`: the language to translate into
-* `data`: the JSON object to translate, it can have any structure, and the service will only translate the content of the fields but not the names
+[Nest](https://github.com/nestjs/nest) framework TypeScript starter repository.
 
-An example of request body: 
-```
-{
-    "original_language": "en-us",
-    "language": "it-it",
-    "data": {
-        "title": "A nice guide", 
-        "steps": [{
-            "title": "step 1",
-            "content": "some content"
-        },{
-            "title": "step 2",
-            "content": "some other content"
-        }]
-    }
-}
+## Installation
+
+```bash
+$ npm install
 ```
 
-If the request is successful, the translation API will respond with a status 200 and a JSON object that looks exactly like the request, 
-but the content will be in the requested language. 
+## Running the app
 
-## System Design Task:
-Design the system architecture for the backend considering the following factors:
+```bash
+# development
+$ npm run start
 
-1. Ensure the system can handle any number of languages to be translated into, even in the case of guides with a high number of steps.
-2. Design the system to be resilient to failures, ensuring that guide data is not lost and that errors are handled gracefully.
-3. Determine the schema for storing guides and their translations. Consider how to efficiently retrieve and update guide data.
+# watch mode
+$ npm run start:dev
 
-Document your system design decisions, explaining the rationale behind your choices and how they address the requirements and constraints of the problem.
+# production mode
+$ npm run start:prod
+```
 
-## Coding Task:
-Implement a proof of concept the backend in one of the following languages: PHP, Node.js (TypeScript), or Go. 
-You can use any framework or library you deem suitable for the task.
-The system should allow to: 
+## Test
 
-* Perform CRUD operations on guides
-* Translate one guide to one or more languages
+```bash
+# unit tests
+$ npm run test
 
-### Notes
-* The coding task is only a proof of concept, so simplifications to the original design will be accepted.
-* Feel free to mock any external service (e.g. storage, translation service).
-* Assume the host of the translation service is a configuration of the system.
+# e2e tests
+$ npm run test:e2e
 
+# test coverage
+$ npm run test:cov
+```
+
+## Support
+
+Nest is an MIT-licensed open source project. It can grow thanks to the sponsors and support by the amazing backers. If you'd like to join them, please [read more here](https://docs.nestjs.com/support).
+
+## Stay in touch
+
+- Author - [Kamil Myśliwiec](https://kamilmysliwiec.com)
+- Website - [https://nestjs.com](https://nestjs.com/)
+- Twitter - [@nestframework](https://twitter.com/nestframework)
+
+## License
+
+Nest is [MIT licensed](LICENSE).

@@ -1,0 +1,50 @@
+{
+  "$schema": "https://json.schemastore.org/nest-cli",
+  "collection": "@nestjs/schematics",
+  "sourceRoot": "apps/guide-manager/src",
+  "compilerOptions": {
+    "deleteOutDir": true,
+    "webpack": true,
+    "tsConfigPath": "apps/guide-manager/tsconfig.app.json"
+  },
+  "monorepo": true,
+  "root": "apps/guide-manager",
+  "projects": {
+    "guide-manager": {
+      "type": "application",
+      "root": "apps/guide-manager",
+      "entryFile": "main",
+      "sourceRoot": "apps/guide-manager/src",
+      "compilerOptions": {
+        "tsConfigPath": "apps/guide-manager/tsconfig.app.json"
+      }
+    },
+    "guide-hash": {
+      "type": "application",
+      "root": "apps/guide-hash",
+      "entryFile": "main",
+      "sourceRoot": "apps/guide-hash/src",
+      "compilerOptions": {
+        "tsConfigPath": "apps/guide-hash/tsconfig.app.json"
+      }
+    },
+    "guide-translation": {
+      "type": "application",
+      "root": "apps/guide-translation",
+      "entryFile": "main",
+      "sourceRoot": "apps/guide-translation/src",
+      "compilerOptions": {
+        "tsConfigPath": "apps/guide-translation/tsconfig.app.json"
+      }
+    },
+    "message-broker": {
+      "type": "library",
+      "root": "libs/message-broker",
+      "entryFile": "index",
+      "sourceRoot": "libs/message-broker/src",
+      "compilerOptions": {
+        "tsConfigPath": "libs/message-broker/tsconfig.lib.json"
+      }
+    }
+  }
+}
