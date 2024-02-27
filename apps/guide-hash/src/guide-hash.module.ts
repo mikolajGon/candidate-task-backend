@@ -6,6 +6,7 @@ import { DynamooseModule } from 'nestjs-dynamoose';
 import { GuideTranslationStoreToken } from './domain/entity/guide/guide.store';
 import { GuideDynamodbStore } from './persistance/dynamodb/guide-translation-store/guide-translation-dynamodb-store.adapter';
 import { GuideSchema } from './persistance/dynamodb/guide-translation-store/guide.schema';
+import { NewTranslationController } from './message-broker/new-translation/new-translation.controller';
 
 // simple microservices, no need to split it in more modules for this poc
 // hard coding config since it is recruitment task poc
@@ -18,6 +19,9 @@ import { GuideSchema } from './persistance/dynamodb/guide-translation-store/guid
       {
         name: 'GuideModel',
         schema: GuideSchema,
+        options: {
+          tableName: 'guide-hash-service-guide',
+        },
       },
     ]),
     ClientsModule.register([
@@ -36,7 +40,7 @@ import { GuideSchema } from './persistance/dynamodb/guide-translation-store/guid
       },
     ]),
   ],
-  controllers: [NewTranslationRequestController],
+  controllers: [NewTranslationRequestController, NewTranslationController],
   providers: [
     GuideTranslationDomainApi,
     {

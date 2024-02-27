@@ -1,9 +1,6 @@
 import { z } from 'zod';
 import { LanguageEnum } from '@lib/message-broker/common/language';
-import {
-  guideSchema,
-  NestedStringObject,
-} from '@lib/message-broker/common/guide';
+import { guideSchema } from '@lib/message-broker/common/guide';
 
 export const NEW_TRANSLATION_REQUEST = 'new_translation_request' as const;
 
@@ -14,9 +11,7 @@ const languageRequestDtoSchema = z.object({
 
 export type LanguageRequestDto = z.infer<typeof languageRequestDtoSchema>;
 
-export const newTranslationRequestDtoSchema: z.ZodType<
-  LanguageRequestDto & { data: NestedStringObject }
-> = languageRequestDtoSchema.extend({
+export const newTranslationRequestDtoSchema = languageRequestDtoSchema.extend({
   data: guideSchema,
 });
 

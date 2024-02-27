@@ -11,6 +11,9 @@ async function bootstrap() {
         client: {
           brokers: ['localhost:19092'],
         },
+        consumer: {
+          groupId: 'guide-hash-consumer',
+        },
       },
     },
   );

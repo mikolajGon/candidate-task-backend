@@ -1,4 +1,6 @@
 // Random locale list - does not matter for this task
+import { z } from 'zod';
+
 export const LANGUAGE = [
   'af_NA',
   'af_ZA',

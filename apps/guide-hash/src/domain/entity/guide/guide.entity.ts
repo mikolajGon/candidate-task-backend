@@ -1,7 +1,8 @@
-import { GuideLanguage } from './language.enum';
+import { GuideLanguage } from '@lib/domain/entity/common/language.enum';
 import { GuideStore } from './guide.store';
 import { createHash } from 'crypto';
-import { uuid } from 'uuidv4';
+import { v4 } from 'uuid';
+import { EntityInit } from '@lib/domain/utils';
 
 // @ts-expect-error because we need generic record of infinite depth.
 export type NestedStringObject = Record<
@@ -15,6 +16,7 @@ export type NestedStringObject = Record<
 export type GuideEntityInit = {
   language: GuideLanguage;
   guideContent: NestedStringObject;
+  id?: string;
 };
 
 type GuideTranslationConstructor = {
@@ -27,25 +29,31 @@ export class Guide {
   public static async init(
     guide: GuideEntityInit,
     guideStore: GuideStore,
-  ): Promise<
-    | { exists: true; get: () => Guide }
-    | { exists: false; create: () => Promise<Guide> }
-  > {
+  ): EntityInit<Guide> {
     const hash = this.calculateHash(guide.guideContent);
     const id = await guideStore.getId(hash, guide.language);
+
+    if (guide.id !== undefined) {
+      const idExists = await guideStore.idExists(guide.id);
+      if (!idExists) throw new Error('given id do not exists');
+    }
 
     if (id === null) {
       return {
         exists: false,
         create: async () => {
           const newGuideTranslation = new this(
-            { id: uuid(), hash, language: guide.language },
+            { id: guide.id ?? v4(), hash, language: guide.language },
             guideStore,
           );
           await guideStore.create(newGuideTranslation);
           return newGuideTranslation;
         },
       };
+    }
+
+    if (guide.id !== undefined) {
+      if (id !== guide.id) throw new Error('This Guide already has id');
     }
 
     return {

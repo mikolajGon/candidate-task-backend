@@ -23,6 +23,12 @@
       ],
       "@lib/message-broker/*": [
         "libs/message-broker/src/*"
+      ],
+      "@lib/domain": [
+        "libs/domain/src"
+      ],
+      "@lib/domain/*": [
+        "libs/domain/src/*"
       ]
     },
     "strict": true

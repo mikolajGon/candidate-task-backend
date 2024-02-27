@@ -4,8 +4,8 @@
   "sourceRoot": "apps/guide-manager/src",
   "compilerOptions": {
     "deleteOutDir": true,
-    "webpack": true,
-    "tsConfigPath": "apps/guide-manager/tsconfig.app.json"
+    "tsConfigPath": "apps/guide-manager/tsconfig.app.json",
+    "webpack": true
   },
   "monorepo": true,
   "root": "apps/guide-manager",
@@ -44,6 +44,15 @@
       "sourceRoot": "libs/message-broker/src",
       "compilerOptions": {
         "tsConfigPath": "libs/message-broker/tsconfig.lib.json"
+      }
+    },
+    "domain": {
+      "type": "library",
+      "root": "libs/domain",
+      "entryFile": "index",
+      "sourceRoot": "libs/domain/src",
+      "compilerOptions": {
+        "tsConfigPath": "libs/domain/tsconfig.lib.json"
       }
     }
   }

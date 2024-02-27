@@ -4,9 +4,10 @@ import {
   GuideStore,
   GuideTranslationStoreToken,
 } from '../../entity/guide/guide.store';
-import { GuideLanguage } from '../../entity/guide/language.enum';
+import { GuideLanguage } from '@lib/domain/entity/common/language.enum';
 import { Observable } from 'rxjs';
-import { ProcessTranslationResults } from './process-translation.results';
+import { ProcessRequestForNewTranslationResult } from './process-request-for-new-translation.result';
+import { ObservableAsyncResult, result } from '@lib/domain';
 
 @Injectable()
 export class GuideTranslationDomainApi {
@@ -15,12 +16,12 @@ export class GuideTranslationDomainApi {
     private readonly guideTranslationStore: GuideStore,
   ) {}
 
-  async processNewTranslation(newTranslation: {
+  async processRequestForNewTranslation(newTranslation: {
     translateTo: GuideLanguage;
     translateFrom: GuideLanguage;
     guide: NestedStringObject;
-  }): Promise<Observable<ProcessTranslationResults>> {
-    const guideTranslationInit = await Guide.init(
+  }): ObservableAsyncResult<ProcessRequestForNewTranslationResult, Guide> {
+    const guideInit = await Guide.init(
       {
         language: newTranslation.translateFrom,
         guideContent: newTranslation.guide,
@@ -28,25 +29,62 @@ export class GuideTranslationDomainApi {
       this.guideTranslationStore,
     );
 
-    const guideTranslation = guideTranslationInit.exists
-      ? guideTranslationInit.get()
-      : await guideTranslationInit.create();
+    const guideTranslation = guideInit.exists
+      ? guideInit.get()
+      : await guideInit.create();
 
     const hasTranslation = await guideTranslation.hasTranslationFor(
       newTranslation.translateTo,
     );
 
     return new Observable((subscriber) => {
-      if (!guideTranslationInit.exists) {
-        subscriber.next(ProcessTranslationResults.NEW_TRANSLATION_CREATED);
+      if (!guideInit.exists) {
+        subscriber.next(
+          result(
+            ProcessRequestForNewTranslationResult.NEW_TRANSLATION_CREATED,
+            guideTranslation,
+          ),
+        );
       }
 
       subscriber.next(
         hasTranslation
-          ? ProcessTranslationResults.TRANSLATION_EXISTS
-          : ProcessTranslationResults.TRANSLATION_DO_NOT_EXISTS,
+          ? result(
+              ProcessRequestForNewTranslationResult.TRANSLATION_EXISTS,
+              guideTranslation,
+            )
+          : result(
+              ProcessRequestForNewTranslationResult.TRANSLATION_DO_NOT_EXISTS,
+              guideTranslation,
+            ),
       );
       subscriber.complete();
     });
+  }
+
+  async processNewTranslation({
+    guideContent,
+    language,
+    id,
+  }: {
+    guideContent: NestedStringObject;
+    language: GuideLanguage;
+    id: string;
+  }) {
+    const guideInit = await Guide.init(
+      {
+        language,
+        guideContent,
+        id,
+      },
+      this.guideTranslationStore,
+    );
+
+    if (guideInit.exists) {
+      console.info('Guide already exists');
+      return;
+    }
+
+    await guideInit.create();
   }
 }

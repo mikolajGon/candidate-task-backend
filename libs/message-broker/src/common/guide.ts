@@ -1,16 +1,9 @@
 import { z } from 'zod';
-
-// @ts-expect-error because we need generic record of infinite depth.
-export type NestedStringObject = Record<
-  string,
-  | string
-  | number
-  | NestedStringObject
-  | (string | number | NestedStringObject)[]
->;
-
-export const guideSchema: z.ZodType<NestedStringObject> = z.lazy(() =>
-  z.record(z.string(), z.union([guideSchemaUnion, z.array(guideSchemaUnion)])),
+const literalSchema = z.union([z.string(), z.number(), z.boolean(), z.null()]);
+type Literal = z.infer<typeof literalSchema>;
+type Json = Literal | { [key: string]: Json } | Json[];
+export const guideSchema: z.ZodType<Json> = z.lazy(() =>
+  z.union([literalSchema, z.array(guideSchema), z.record(guideSchema)]),
 );
 
-const guideSchemaUnion = z.union([z.string(), z.number(), guideSchema]);
+export type Guide = z.infer<typeof guideSchema>;

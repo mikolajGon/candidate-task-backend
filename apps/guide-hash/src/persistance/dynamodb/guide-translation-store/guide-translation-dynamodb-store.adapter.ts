@@ -1,7 +1,7 @@
 import { Injectable } from '@nestjs/common';
 import { GuideStore } from '../../../domain/entity/guide/guide.store';
 import { Guide } from '../../../domain/entity/guide/guide.entity';
-import { GuideLanguage } from '../../../domain/entity/guide/language.enum';
+import { GuideLanguage } from '@lib/domain/entity/common/language.enum';
 import { InjectModel } from 'nestjs-dynamoose';
 import { GuideModel } from './guide.schema';
 
@@ -42,6 +42,21 @@ export class GuideDynamodbStore implements GuideStore {
         .eq(guideId)
         .where('language')
         .eq(language)
+        .exec();
+
+      return result.count > 0;
+    } catch (e) {
+      console.error(e);
+      return false;
+    }
+  }
+
+  async idExists(guideId: string): Promise<boolean> {
+    try {
+      const result = await this.guideModel
+        .query('id')
+        .using('idIndex')
+        .eq(guideId)
         .exec();
 
       return result.count > 0;
