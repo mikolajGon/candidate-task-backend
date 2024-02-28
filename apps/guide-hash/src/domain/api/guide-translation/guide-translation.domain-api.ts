@@ -1,13 +1,13 @@
 import { Inject, Injectable } from '@nestjs/common';
-import { Guide, NestedStringObject } from '../../entity/guide/guide.entity';
+import { Guide } from '../../entity/guide/guide.entity';
 import {
   GuideStore,
   GuideTranslationStoreToken,
 } from '../../entity/guide/guide.store';
 import { GuideLanguage } from '@lib/domain/entity/common/language.enum';
 import { Observable } from 'rxjs';
-import { ProcessRequestForNewTranslationResult } from './process-request-for-new-translation.result';
-import { ObservableAsyncResult, result } from '@lib/domain';
+import { GuideContent, ObservableAsyncResult, result } from '@lib/domain';
+import { ProcessTranslationResults } from './process-translation.results';
 
 @Injectable()
 export class GuideTranslationDomainApi {
@@ -19,8 +19,8 @@ export class GuideTranslationDomainApi {
   async processRequestForNewTranslation(newTranslation: {
     translateTo: GuideLanguage;
     translateFrom: GuideLanguage;
-    guide: NestedStringObject;
-  }): ObservableAsyncResult<ProcessRequestForNewTranslationResult, Guide> {
+    guide: GuideContent;
+  }): ObservableAsyncResult<ProcessTranslationResults, Guide> {
     const guideInit = await Guide.init(
       {
         language: newTranslation.translateFrom,
@@ -41,7 +41,7 @@ export class GuideTranslationDomainApi {
       if (!guideInit.exists) {
         subscriber.next(
           result(
-            ProcessRequestForNewTranslationResult.NEW_TRANSLATION_CREATED,
+            ProcessTranslationResults.NEW_TRANSLATION_CREATED,
             guideTranslation,
           ),
         );
@@ -50,11 +50,11 @@ export class GuideTranslationDomainApi {
       subscriber.next(
         hasTranslation
           ? result(
-              ProcessRequestForNewTranslationResult.TRANSLATION_EXISTS,
+              ProcessTranslationResults.TRANSLATION_EXISTS,
               guideTranslation,
             )
           : result(
-              ProcessRequestForNewTranslationResult.TRANSLATION_DO_NOT_EXISTS,
+              ProcessTranslationResults.TRANSLATION_DO_NOT_EXISTS,
               guideTranslation,
             ),
       );
@@ -67,7 +67,7 @@ export class GuideTranslationDomainApi {
     language,
     id,
   }: {
-    guideContent: NestedStringObject;
+    guideContent: GuideContent;
     language: GuideLanguage;
     id: string;
   }) {

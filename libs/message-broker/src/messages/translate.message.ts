@@ -4,13 +4,6 @@ import { guideSchema } from '@lib/message-broker/common/guide';
 
 export const TRANSLATE = 'translate';
 
-const languageRequestDtoSchema = z.object({
-  languageFrom: LanguageEnum,
-  languageTo: LanguageEnum,
-});
-
-type LanguageRequestDto = z.infer<typeof languageRequestDtoSchema>;
-
 export const translateDtoSchema = z.object({
   languageFrom: LanguageEnum,
   languageTo: LanguageEnum,

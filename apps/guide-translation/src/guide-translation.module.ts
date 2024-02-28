@@ -11,7 +11,7 @@ import { TranslationDynamodbStore } from './persistance/dynamodb/guide-translati
 import { TranslateHttpFacade } from './facade/translate/translate-http.facade';
 import { ScheduleModule } from '@nestjs/schedule';
 import { TranslateFacadeToken } from './domain/service/port/translate.facade';
-import { TranslateNotificatorToken } from './domain/service/port/translate-notificator.port';
+import { TranslateNotificatorToken } from './domain/service/port/translate.notificator';
 import { NewTranslationProducer } from './message-broker/new-translation.producer';
 
 @Module({

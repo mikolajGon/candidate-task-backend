@@ -2,6 +2,10 @@ import { Controller, Inject, Logger } from '@nestjs/common';
 import { GuideTranslationDomainApi } from '../../domain/api/guide-translation/guide-translation.domain-api';
 import { ClientKafka, EventPattern } from '@nestjs/microservices';
 import {
+  CLIENT_TRANSLATION_REQUEST,
+  ClientTranslationRequestMessage,
+  MessageLogging,
+  NEW_TRANSLATION,
   NEW_TRANSLATION_REQUEST,
   NewTranslationMessage,
   NewTranslationRequestDto,
@@ -19,6 +23,7 @@ export class NewTranslationRequestController {
   ) {}
 
   @EventPattern(NEW_TRANSLATION_REQUEST)
+  @MessageLogging
   async handleNewTranslationRequest(
     newTranslationRequest: unknown,
   ): Promise<Observable<any> | undefined> {
@@ -44,7 +49,16 @@ export class NewTranslationRequestController {
       });
 
     observableResult.subscribe((result) => {
-      this.logger.log(result);
+      this.logger.debug(result);
+
+      this.kafkaClient.emit<any, ClientTranslationRequestMessage>(
+        CLIENT_TRANSLATION_REQUEST,
+        {
+          guideId: result.payload.id,
+          language: validatedNewTranslationRequest.language,
+          client: validatedNewTranslationRequest.client,
+        },
+      );
       switch (result.message) {
         case 'TRANSLATION_DO_NOT_EXISTS':
           this.kafkaClient.emit(TRANSLATE, {
@@ -55,7 +69,7 @@ export class NewTranslationRequestController {
           });
           break;
         case 'NEW_TRANSLATION_CREATED':
-          this.kafkaClient.emit<any, NewTranslationMessage>('new_translation', {
+          this.kafkaClient.emit<any, NewTranslationMessage>(NEW_TRANSLATION, {
             guideId: result.payload.id,
             language: result.payload.language,
             translatedGuide: validatedNewTranslationRequest.data,

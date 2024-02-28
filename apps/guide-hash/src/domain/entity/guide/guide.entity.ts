@@ -3,19 +3,11 @@ import { GuideStore } from './guide.store';
 import { createHash } from 'crypto';
 import { v4 } from 'uuid';
 import { EntityInit } from '@lib/domain/utils';
-
-// @ts-expect-error because we need generic record of infinite depth.
-export type NestedStringObject = Record<
-  string,
-  | string
-  | number
-  | NestedStringObject
-  | (string | number | NestedStringObject)[]
->;
+import { GuideContent } from '@lib/domain';
 
 export type GuideEntityInit = {
   language: GuideLanguage;
-  guideContent: NestedStringObject;
+  guideContent: GuideContent;
   id?: string;
 };
 

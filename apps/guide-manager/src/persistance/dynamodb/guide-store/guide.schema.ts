@@ -1,12 +1,13 @@
 import { Schema } from 'dynamoose';
 import { Model } from 'nestjs-dynamoose';
+import { GuideLanguage } from '@lib/domain';
 
 export const GuideSchema = new Schema({
-  language: {
+  externalId: {
     type: String,
     hashKey: true,
   },
-  hash: {
+  language: {
     type: String,
     rangeKey: true,
   },
@@ -15,18 +16,21 @@ export const GuideSchema = new Schema({
     index: {
       name: 'idIndex',
       type: 'global',
-      rangeKey: 'language',
     },
+  },
+  content: {
+    type: String,
   },
 });
 
 export type GuideKey = {
-  hash: string;
-  language: string;
+  externalId: string;
+  language: GuideLanguage;
 };
 
 export type GuideObject = {
   id: string;
+  content?: string;
 } & GuideKey;
 
 export type GuideModel = Model<GuideObject, GuideKey>;

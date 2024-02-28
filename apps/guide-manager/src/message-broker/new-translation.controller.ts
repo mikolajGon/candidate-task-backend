@@ -1,5 +1,5 @@
 import { Controller } from '@nestjs/common';
-import { GuideTranslationDomainApi } from '../../domain/api/guide-translation/guide-translation.domain-api';
+import { ClientTranslationDomainApi } from '../domain/api/client-translation.domain-api';
 import { EventPattern } from '@nestjs/microservices';
 import {
   MessageLogging,
@@ -10,7 +10,7 @@ import {
 @Controller()
 export class NewTranslationController {
   constructor(
-    private readonly guideTranslationDomainApi: GuideTranslationDomainApi,
+    private readonly guideTranslationDomainApi: ClientTranslationDomainApi,
   ) {}
 
   @EventPattern(NEW_TRANSLATION)
@@ -27,10 +27,10 @@ export class NewTranslationController {
 
     const { language, translatedGuide, guideId } = parseResult.data;
 
-    await this.guideTranslationDomainApi.processNewTranslation({
+    await this.guideTranslationDomainApi.newTranslation(
+      guideId,
       language,
-      id: guideId,
-      guideContent: translatedGuide,
-    });
+      translatedGuide,
+    );
   }
 }

@@ -10,7 +10,7 @@ import { TranslateFacade, TranslateFacadeToken } from './port/translate.facade';
 import {
   TranslateNotificator,
   TranslateNotificatorToken,
-} from './port/translate-notificator.port';
+} from './port/translate.notificator';
 
 @Injectable()
 export class TranslatorService {
