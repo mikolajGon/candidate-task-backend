@@ -19,7 +19,7 @@ import { NewTranslationProducer } from './message-broker/new-translation.produce
     HttpModule,
     ScheduleModule.forRoot(),
     DynamooseModule.forRoot({
-      local: true,
+      local: `${process.env.DYNAMODB_ADDRESS}`,
     }),
     DynamooseModule.forFeature([
       {
@@ -37,7 +37,7 @@ import { NewTranslationProducer } from './message-broker/new-translation.produce
         options: {
           client: {
             clientId: 'guide-translation',
-            brokers: ['localhost:19092'],
+            brokers: [`${process.env.KAFKA_ADDRESS}`],
           },
           consumer: {
             groupId: 'guide-translation-consumer',

@@ -54,7 +54,7 @@ export class Guide {
     };
   }
 
-  private static calculateHash(guide: string): string {
+  private static calculateHash(guide: GuideContent): string {
     return createHash('sha1').update(JSON.stringify(guide)).digest('hex');
   }
 

@@ -1,9 +1,13 @@
 version: "3.7"
-name: redpanda-quickstart
+name: guide-system
 networks:
+  dynamo:
+    name: dynamo
+    driver: bridge
   libretranslate:
     name: libretranslate
   redpanda_network:
+    name: redpanda_network
     driver: bridge
 volumes:
   redpanda-0: null
@@ -76,6 +80,8 @@ services:
       - "8000:8000"
     volumes:
       - "./docker/dynamodb:/home/dynamodblocal/data"
+    networks:
+      - dynamo
     working_dir: /home/dynamodblocal
   libretranslate:
     image: "libretranslate/libretranslate:latest"
@@ -83,7 +89,72 @@ services:
     restart: unless-stopped
     healthcheck:
       test: ['CMD-SHELL', './venv/bin/python scripts/healthcheck.py']
+    volumes:
+      - ./docker/argos-translate:/home/libretranslate/.local/share/argos-translate
     ports:
       - "5001:5000"
     networks:
       - libretranslate
+  guide-hash:
+    container_name: guide-hash
+    build: ./server
+    command: npm run guide-hash-start
+    restart: always
+    volumes:
+      - .:/usr/app/
+    environment:
+      AWS_REGION: eu-central-1
+      AWS_SECRET_ACCESS_KEY: none
+      AWS_ACCESS_KEY_ID: none
+      KAFKA_ADDRESS: redpanda-0:9092
+      DYNAMODB_ADDRESS: http://dynamodb-local:8000
+      LIBRETRANSLATE_ADDRESS: http://libretranslate:5000/translate
+    depends_on:
+      - redpanda-0
+      - dynamodb-local
+      - libretranslate
+    networks:
+      - redpanda_network
+      - libretranslate
+      - dynamo
+  guide-translation:
+    container_name: guide-translation
+    build: ./server
+    command: npm run guide-translation-start
+    restart: always
+    volumes:
+      - .:/usr/app/
+    environment:
+      AWS_REGION: eu-central-1
+      AWS_SECRET_ACCESS_KEY: none
+      AWS_ACCESS_KEY_ID: none
+      KAFKA_ADDRESS: redpanda-0:9092
+      DYNAMODB_ADDRESS: http://dynamodb-local:8000
+      LIBRETRANSLATE_ADDRESS: http://libretranslate:5000/translate
+    depends_on:
+      - redpanda-0
+      - dynamodb-local
+      - libretranslate
+    networks:
+      - redpanda_network
+      - libretranslate
+      - dynamo
+  guide-manager:
+    container_name: guide-manager
+    build: ./server
+    command: npm run guide-manager-start
+    restart: always
+    volumes:
+      - .:/usr/app/
+    environment:
+      AWS_REGION: eu-central-1
+      AWS_SECRET_ACCESS_KEY: none
+      AWS_ACCESS_KEY_ID: none
+      KAFKA_ADDRESS: redpanda-0:9092
+      DYNAMODB_ADDRESS: http://dynamodb-local:8000
+    depends_on:
+      - redpanda-0
+      - dynamodb-local
+    networks:
+      - redpanda_network
+      - dynamo

@@ -16,7 +16,7 @@ export class TranslateHttpFacade implements TranslateFacade {
     const source = this.convertLanguage(translation.languageFrom);
     const target = this.convertLanguage(translation.languageTo);
     const replyObservable = this.httpService.post(
-      'http://localhost:5001/translate',
+      `${process.env.LIBRETRANSLATE_ADDRESS}`,
       {
         q: translation.text,
         source,

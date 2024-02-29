@@ -9,11 +9,11 @@ import { GuideSchema } from './persistance/dynamodb/guide-translation-store/guid
 import { NewTranslationController } from './message-broker/new-translation/new-translation.controller';
 
 // simple microservices, no need to split it in more modules for this poc
-// hard coding config since it is recruitment task poc
+// hard coding most config since it is recruitment task poc
 @Module({
   imports: [
     DynamooseModule.forRoot({
-      local: true,
+      local: `${process.env.DYNAMODB_ADDRESS}`,
     }),
     DynamooseModule.forFeature([
       {
@@ -31,7 +31,7 @@ import { NewTranslationController } from './message-broker/new-translation/new-t
         options: {
           client: {
             clientId: 'guide-hash',
-            brokers: ['localhost:19092'],
+            brokers: [`${process.env.KAFKA_ADDRESS}`],
           },
           consumer: {
             groupId: 'guide-hash-consumer',

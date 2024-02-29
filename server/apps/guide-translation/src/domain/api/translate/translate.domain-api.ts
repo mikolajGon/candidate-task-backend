@@ -24,6 +24,7 @@ export class TranslateDomainApi {
       newTranslation,
       this.translationStore,
     );
+
     if (!translationInit.exists) {
       await translationInit.create();
       this.translatorService.scheduleTranslation();

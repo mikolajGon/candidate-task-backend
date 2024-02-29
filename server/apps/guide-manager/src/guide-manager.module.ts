@@ -17,7 +17,7 @@ import { ClientTranslationRequestController } from './message-broker/client-tran
 @Module({
   imports: [
     DynamooseModule.forRoot({
-      local: true,
+      local: `${process.env.DYNAMODB_ADDRESS}`,
     }),
     DynamooseModule.forFeature([
       {
@@ -42,7 +42,7 @@ import { ClientTranslationRequestController } from './message-broker/client-tran
         options: {
           client: {
             clientId: 'guide-manager',
-            brokers: ['localhost:19092'],
+            brokers: [`${process.env.KAFKA_ADDRESS}`],
           },
           consumer: {
             groupId: 'guide-manager-consumer',
