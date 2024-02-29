@@ -8,8 +8,8 @@ import {
   NEW_TRANSLATION,
   NEW_TRANSLATION_REQUEST,
   NewTranslationMessage,
-  NewTranslationRequestDto,
-  newTranslationRequestDtoSchema,
+  NewTranslationRequestMessage,
+  newTranslationRequestMessageSchema,
 } from '@lib/message-broker';
 import { Observable } from 'rxjs';
 import { TRANSLATE } from '@lib/message-broker/messages/translate.message';
@@ -27,7 +27,7 @@ export class NewTranslationRequestController {
   async handleNewTranslationRequest(
     newTranslationRequest: unknown,
   ): Promise<Observable<any> | undefined> {
-    const parseResult = newTranslationRequestDtoSchema.safeParse(
+    const parseResult = newTranslationRequestMessageSchema.safeParse(
       newTranslationRequest,
     );
 
@@ -38,7 +38,7 @@ export class NewTranslationRequestController {
       return;
     }
 
-    const validatedNewTranslationRequest: NewTranslationRequestDto =
+    const validatedNewTranslationRequest: NewTranslationRequestMessage =
       parseResult.data;
 
     const observableResult =

@@ -3,12 +3,7 @@ import { TranslateNotificator } from '../domain/service/port/translate.notificat
 import { Translation } from '../domain/entity/translation/translation.entity';
 import { unflatten } from 'flat';
 import { ClientKafka } from '@nestjs/microservices';
-import {
-  NEW_TRANSLATION,
-  NEW_TRANSLATION_REQUEST,
-  NewTranslationMessage,
-  NewTranslationRequestDto,
-} from '@lib/message-broker';
+import { NEW_TRANSLATION, NewTranslationMessage } from '@lib/message-broker';
 import { Guide } from '@lib/message-broker/common/guide';
 
 @Injectable()

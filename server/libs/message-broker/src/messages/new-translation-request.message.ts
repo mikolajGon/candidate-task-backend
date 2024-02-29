@@ -5,18 +5,18 @@ import { clientSchema } from '@lib/message-broker/common';
 
 export const NEW_TRANSLATION_REQUEST = 'new_translation_request' as const;
 
-const languageRequestDtoSchema = z.object({
+export const languageMessage = z.object({
   original_language: LanguageEnum,
   language: LanguageEnum,
 });
 
-export type LanguageRequestDto = z.infer<typeof languageRequestDtoSchema>;
+export type LanguageMessage = z.infer<typeof languageMessage>;
 
-export const newTranslationRequestDtoSchema = languageRequestDtoSchema.extend({
+export const newTranslationRequestMessageSchema = languageMessage.extend({
   data: guideSchema,
   client: clientSchema,
 });
 
-export type NewTranslationRequestDto = z.infer<
-  typeof newTranslationRequestDtoSchema
+export type NewTranslationRequestMessage = z.infer<
+  typeof newTranslationRequestMessageSchema
 >;
