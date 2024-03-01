@@ -41,6 +41,43 @@ docker compose up -d
 
 wait for docker containers to become healthy
 
+### Alternative run (require node v20.11.1 )
+
+If docker node services are not running, or you want to dev, please do the following
+
+`docker compose -f path/to/repo/docker-compose-dev.yml up -d`
+
+open 4 new terminal window inside path `path/to/repo/server/`
+
+run in each session before start:
+```shell
+export AWS_REGION=eu-central-1 \n
+export AWS_SECRET_ACCESS_KEY=none \n
+export AWS_ACCESS_KEY_ID=none \n
+export DYNAMODB_ADDRESS='http://localhost:8000' \n
+export KAFKA_ADDRESS='localhost:19092' \n
+export LIBRETRANSLATE_ADDRESS='http://localhost:5001/translate'
+```
+
+then for each service run:
+```shell
+npm run api-gateway-start
+```
+
+```shell
+npm run guide-hash-start
+```
+
+```shell
+npm run guide-manager-start
+```
+
+```shell
+npm run guide-translation-start
+```
+
+### Calling API
+
 just hit endpoint with POST `http://localhost:3000/v1/auto-translate` with eg. data
 ```json
 
