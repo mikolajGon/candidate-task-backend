@@ -1,4 +1,4 @@
-import { Inject, Injectable } from '@nestjs/common';
+import { Inject, Injectable, Logger } from '@nestjs/common';
 import { Guide } from '../../entity/guide/guide.entity';
 import {
   GuideStore,
@@ -11,6 +11,7 @@ import { ProcessTranslationResults } from './process-translation.results';
 
 @Injectable()
 export class GuideTranslationDomainApi {
+  private readonly logger = new Logger(GuideTranslationDomainApi.name);
   constructor(
     @Inject(GuideTranslationStoreToken)
     private readonly guideTranslationStore: GuideStore,
@@ -81,7 +82,7 @@ export class GuideTranslationDomainApi {
     );
 
     if (guideInit.exists) {
-      console.info('Guide already exists');
+      this.logger.log('Guide already exists');
       return;
     }
 

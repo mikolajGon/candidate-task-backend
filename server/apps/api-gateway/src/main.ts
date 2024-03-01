@@ -6,8 +6,6 @@ import { TimeoutInterceptor } from './infrastructure/timeout/timeout.interceptor
 async function bootstrap() {
   const app = await NestFactory.create(ApiGatewayModule);
 
-  app.useGlobalInterceptors(new TimeoutInterceptor(app.get(Reflector)));
-
   app.connectMicroservice({
     transport: Transport.KAFKA,
     options: {
@@ -19,7 +17,12 @@ async function bootstrap() {
       },
     },
   });
+
   await app.startAllMicroservices();
+
+  app.useGlobalInterceptors(new TimeoutInterceptor(app.get(Reflector)));
+
   await app.listen(3000);
 }
-bootstrap();
+
+void bootstrap();

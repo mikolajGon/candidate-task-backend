@@ -44,11 +44,6 @@ services:
       - redpanda-0:/var/lib/redpanda/data
     networks:
       - redpanda_network
-    ports:
-      - 18081:18081
-      - 18082:18082
-      - 19092:19092
-      - 19644:9644
   console:
     container_name: redpanda-console
     image: docker.redpanda.com/redpandadata/console:v2.4.3
@@ -76,8 +71,6 @@ services:
     command: "-jar DynamoDBLocal.jar -sharedDb -dbPath ./data"
     image: "amazon/dynamodb-local:latest"
     container_name: dynamodb-local
-    ports:
-      - "8000:8000"
     volumes:
       - "./docker/dynamodb:/home/dynamodblocal/data"
     networks:
@@ -91,8 +84,6 @@ services:
       test: ['CMD-SHELL', './venv/bin/python scripts/healthcheck.py']
     volumes:
       - ./docker/argos-translate:/home/libretranslate/.local/share/argos-translate
-    ports:
-      - "5001:5000"
     networks:
       - libretranslate
   guide-hash:
@@ -157,4 +148,32 @@ services:
       - dynamodb-local
     networks:
       - redpanda_network
+      - dynamo
+  api-gateway:
+    container_name: api-gateway
+    build: ./server
+    command: npm run api-gateway-start
+    restart: always
+    volumes:
+      - .:/usr/app/
+    environment:
+      KAFKA_ADDRESS: redpanda-0:9092
+    ports:
+      - "3000:3000"
+    depends_on:
+      - redpanda-0
+    networks:
+      - redpanda_network
+  dynamodb-admin:
+    container_name: dynamodb-admin
+    build: ./dynamodb-admin
+    command: dynamodb-admin -o
+    restart: always
+    environment:
+      DYNAMO_ENDPOINT: http://dynamodb-local:8000
+    ports:
+      - "8001:8001"
+    depends_on:
+      - dynamodb-local
+    networks:
       - dynamo

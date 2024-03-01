@@ -1,4 +1,4 @@
-import { Controller, Inject } from '@nestjs/common';
+import { Controller, Inject, Logger } from '@nestjs/common';
 import { ClientKafka, EventPattern } from '@nestjs/microservices';
 import {
   TRANSLATE,
@@ -11,6 +11,7 @@ import { MessageLogging } from '@lib/message-broker';
 
 @Controller()
 export class TranslateController {
+  private readonly logger = new Logger(TranslateController.name);
   constructor(
     private readonly translateDomainApi: TranslateDomainApi,
     @Inject('GUIDE_TRANSLATION') private readonly kafkaClient: ClientKafka,
@@ -19,11 +20,10 @@ export class TranslateController {
   @EventPattern(TRANSLATE)
   @MessageLogging
   async getHello(translateDto: unknown): Promise<void> {
-    console.log('translate started');
     const parseResult = translateDtoSchema.safeParse(translateDto);
 
     if (!parseResult.success) {
-      console.error('Incorrect Message: ', translateDto);
+      this.logger.error('Incorrect Message: ', translateDto);
       // 1. alerting system eg sentry, skipping since it is POC
       // 2. should send to DLQ, skipping since it is POC
       return;

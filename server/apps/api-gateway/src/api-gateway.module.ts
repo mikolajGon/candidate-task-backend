@@ -1,8 +1,9 @@
 import { Module } from '@nestjs/common';
 import { ClientsModule, Transport } from '@nestjs/microservices';
+import { ClientTranslationReadyController } from './auto-translate/client-translation-ready.controller';
 import { AutoTranslateController } from './auto-translate/auto-translate.controller';
 import { EventEmitterModule } from '@nestjs/event-emitter';
-import { ClientTranslationReadyController } from './auto-translate/client-translation-ready.controller';
+import { TimedOutTranslationService } from './auto-translate/timed-out-translation.service';
 
 @Module({
   imports: [
@@ -23,6 +24,7 @@ import { ClientTranslationReadyController } from './auto-translate/client-transl
       },
     ]),
   ],
-  controllers: [AutoTranslateController, ClientTranslationReadyController],
+  controllers: [ClientTranslationReadyController, AutoTranslateController],
+  providers: [TimedOutTranslationService],
 })
 export class ApiGatewayModule {}

@@ -32,7 +32,7 @@ export class NewTranslationRequestController {
     );
 
     if (!parseResult.success) {
-      console.error('Incorrect Message: ', newTranslationRequest);
+      this.logger.error('Incorrect Message: ', newTranslationRequest);
       // 1. alerting system eg sentry, skipping since it is POC
       // 2. should send to DLQ, skipping since it is POC
       return;

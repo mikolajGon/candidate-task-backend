@@ -1,4 +1,4 @@
-import { Injectable } from '@nestjs/common';
+import { Injectable, Logger } from '@nestjs/common';
 import { GuideStore } from '../../../domain/entity/guide/guide.store';
 import { Guide } from '../../../domain/entity/guide/guide.entity';
 import { GuideLanguage } from '@lib/domain/entity/common/language.enum';
@@ -7,6 +7,7 @@ import { GuideModel } from './guide.schema';
 
 @Injectable()
 export class GuideDynamodbStore implements GuideStore {
+  private readonly logger = new Logger(GuideDynamodbStore.name);
   constructor(
     @InjectModel('GuideModel')
     private guideModel: GuideModel,
@@ -26,7 +27,7 @@ export class GuideDynamodbStore implements GuideStore {
 
       return result.id;
     } catch (e) {
-      console.log(e);
+      this.logger.log(e);
       throw e;
     }
   }
@@ -46,7 +47,7 @@ export class GuideDynamodbStore implements GuideStore {
 
       return result.count > 0;
     } catch (e) {
-      console.error(e);
+      this.logger.error(e);
       return false;
     }
   }
@@ -61,7 +62,7 @@ export class GuideDynamodbStore implements GuideStore {
 
       return result.count > 0;
     } catch (e) {
-      console.error(e);
+      this.logger.error(e);
       return false;
     }
   }

@@ -1,4 +1,4 @@
-import { Controller } from '@nestjs/common';
+import { Controller, Logger } from '@nestjs/common';
 import { ClientTranslationDomainApi } from '../domain/api/client-translation.domain-api';
 import { EventPattern } from '@nestjs/microservices';
 import {
@@ -9,6 +9,7 @@ import {
 
 @Controller()
 export class NewTranslationController {
+  private readonly logger = new Logger(NewTranslationController.name);
   constructor(
     private readonly guideTranslationDomainApi: ClientTranslationDomainApi,
   ) {}
@@ -19,7 +20,7 @@ export class NewTranslationController {
     const parseResult = newTranslationSchema.safeParse(newTranslation);
 
     if (!parseResult.success) {
-      console.error('Incorrect Message: ', newTranslation);
+      this.logger.error('Incorrect Message: ', newTranslation);
       // 1. alerting system eg sentry, skipping since it is POC
       // 2. should send to DLQ, skipping since it is POC
       return;
