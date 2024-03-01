@@ -22,6 +22,10 @@
   - client-manager - responsible for managing client requests for translation, and dispatching them back
 * internal services are hidden behind gateway. That one takes care for actual connections to the client, and provide (in principal) all auth/security stuff
 
+## Arch Diagram sketch
+
+[Simple arch sketch in excalidraw](https://excalidraw.com/#json=SoOJTOcgZA0UgrePhf-al,e9gkX9mGIVmkzpwr9eVR-g)
+
 ## How to run solution
 
 ### Prerequisties
