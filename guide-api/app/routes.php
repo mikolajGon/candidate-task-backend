@@ -2,8 +2,8 @@
 
 declare(strict_types=1);
 
-use App\Application\Actions\User\ListUsersAction;
-use App\Application\Actions\User\ViewUserAction;
+use App\Application\Actions\Guide\CreateGuideAction;
+use App\Application\Actions\Guide\GetGuideAction;
 use Psr\Http\Message\ResponseInterface as Response;
 use Psr\Http\Message\ServerRequestInterface as Request;
 use Slim\App;
@@ -20,16 +20,12 @@ return function (App $app) {
         return $response;
     });
 
-    $app->group('/users', function (Group $group) {
-        $group->get('', ListUsersAction::class);
-        $group->get('/{id}', ViewUserAction::class);
-    });
 
     $app->group('/guides', function (Group $group) {
-        $group->post('/', ViewUserAction::class);
-        $group->get('/{id}', ViewUserAction::class);
-        $group->delete('/{id}', ViewUserAction::class);
-        $group->patch('/{id}', ViewUserAction::class);
-        $group->post('/auto-translate/{id}', ViewUserAction::class);
+        $group->post('/', CreateGuideAction::class);
+        $group->get('/{id}', GetGuideAction::class);
+//        $group->delete('/{id}', ViewUserAction::class);
+//        $group->patch('/{id}', ViewUserAction::class);
+//        $group->post('/auto-translate/{id}', ViewUserAction::class);
     });
 };
