@@ -20,7 +20,7 @@ class GetGuideAction extends GuideAction {
 
         $response = array_map(function(Content $content) use ($guideId) {
             return GuideDto::fromContent($guideId, $content);
-        }, (array)$guide->getAllContent());
+        }, $guide->getAllContent());
 
 
 

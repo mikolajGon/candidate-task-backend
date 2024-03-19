@@ -23,11 +23,14 @@
     ],
     "require": {
         "php": "^8.1",
+        "ext-apcu": "*",
         "ext-json": "*",
+        "doctrine/orm": "^3.1",
         "monolog/monolog": "^2.8",
         "php-di/php-di": "^6.4",
         "slim/psr7": "^1.5",
-        "slim/slim": "^4.10"
+        "slim/slim": "^4.10",
+        "symfony/cache": "^7.0"
     },
     "require-dev": {
         "jangregor/phpstan-prophecy": "^1.0.0",
@@ -39,7 +42,8 @@
     },
     "config": {
         "allow-plugins": {
-            "phpstan/extension-installer": true
+            "phpstan/extension-installer": true,
+            "kylekatarnls/update-helper": true
         },
         "process-timeout": 0,
         "sort-packages": true

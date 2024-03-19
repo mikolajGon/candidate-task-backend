@@ -8,13 +8,11 @@ use App\Infrastructure\Persistence\Guide\Entity\GuideContentEntity;
 
 class InMemoryStore
 {
-    public array $guides;
-    public array $guideContent;
 
     public function __construct()
     {
-        $this->guides = [1];
-        $this->guideContent = [
+        $guides = [1];
+        $guideContent = [
             1 => [
                 Language::En->value => new GuideContentEntity(
                     "A nice guide",
@@ -24,5 +22,29 @@ class InMemoryStore
                     ])
             ]
         ];
+
+
+        $this->setGuides($guides);
+        $this->setGuideContent($guideContent);
+    }
+
+    public function getGuides(): array
+    {
+        return apcu_fetch('guides_key');
+    }
+
+    public function getGuideContent(): array
+    {
+        return apcu_fetch('guide_content_key');
+    }
+
+    public function setGuides(array $guides): void
+    {
+        apcu_store('guides_key', $guides, 3600);
+    }
+
+    public function setGuideContent(array $guideContent): void
+    {
+        apcu_store('guide_content_key', $guideContent, 3600);
     }
 }

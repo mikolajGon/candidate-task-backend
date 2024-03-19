@@ -7,6 +7,8 @@ use App\Application\Settings\SettingsInterface;
 use DI\ContainerBuilder;
 use Monolog\Logger;
 
+const APP_ROOT = __DIR__;
+
 return function (ContainerBuilder $containerBuilder) {
 
     // Global Settings Object
@@ -21,6 +23,21 @@ return function (ContainerBuilder $containerBuilder) {
                     'path' => isset($_ENV['docker']) ? 'php://stdout' : __DIR__ . '/../logs/app.log',
                     'level' => Logger::DEBUG,
                 ],
+
+                'doctrine' => [
+                    'dev_mode' => true,
+                    'cache_dir' => APP_ROOT . '/var/doctrine',
+                    'metadata_dirs' => [APP_ROOT . '/src/Infrastructure/Persistence/Postgres'],
+                    'connection' => [
+                        'driver' => 'pdo_pgsql',
+                        'host' => 'localhost',
+                        'port' => 5432,
+                        'dbname' => 'guide',
+                        'user' => 'guide',
+                        'password' => 'password',
+                        'charset' => 'utf-8'
+                    ]
+                ]
             ]);
         }
     ]);

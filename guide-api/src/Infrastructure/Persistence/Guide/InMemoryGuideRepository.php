@@ -23,10 +23,13 @@ class InMemoryGuideRepository implements GuideRepository, ContentRepository
 
     public function createGuide(): Guide
     {
-        $lastId = end($this->inMemoryStore->guides);
+        $guides = $this->inMemoryStore->getGuides();
+        $lastId = end($guides);
         $newId = !$lastId ? 1 : $lastId + 1;
 
-        $this->inMemoryStore->guides[] = $newId;
+        $guides[] = $newId;
+
+        $this->inMemoryStore->setGuides($guides);
 
         return new Guide($newId);
     }
@@ -34,7 +37,7 @@ class InMemoryGuideRepository implements GuideRepository, ContentRepository
     public function getGuide(int $id): Guide
     {
         echo $id;
-        if (!in_array($id, $this->inMemoryStore->guides)) {
+        if (!in_array($id, $this->inMemoryStore->getGuides())) {
             throw new GuideNotFoundException();
         }
         return new Guide($id);
@@ -45,14 +48,17 @@ class InMemoryGuideRepository implements GuideRepository, ContentRepository
         $guideContentEntity = new GuideContentEntity(
             $content->getTitle(), $content->getSteps()
         );
+        $guideContent = $this->inMemoryStore->getGuideContent();
 
-        if (isset($this->inMemoryStore->guideContent[$content->getGuideId()])) {
-            $this->inMemoryStore->guideContent[$content->getGuideId()][$content->getLanguage()->value] = $guideContentEntity;
+        if (isset($guideContent[$content->getGuideId()])) {
+            $guideContent[$content->getGuideId()][$content->getLanguage()->value] = $guideContentEntity;
         } else {
             $newArray = [];
             $newArray[$content->getLanguage()->value] = $guideContentEntity;
-            $this->inMemoryStore->guideContent[$content->getGuideId()] = $newArray;
+            $guideContent[$content->getGuideId()] = $newArray;
         }
+
+        $this->inMemoryStore->setGuideContent($guideContent);
     }
 
     /**
@@ -60,7 +66,7 @@ class InMemoryGuideRepository implements GuideRepository, ContentRepository
      */
     function getAllContent(int $guideId): array
     {
-        $content = $this->inMemoryStore->guideContent[$guideId];
+        $content = $this->inMemoryStore->getGuideContent()[$guideId];
 
         if (!$content) {
             throw new GuideNotFoundException();

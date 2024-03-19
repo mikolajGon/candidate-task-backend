@@ -4,6 +4,9 @@ declare(strict_types=1);
 
 use App\Application\Settings\SettingsInterface;
 use DI\ContainerBuilder;
+use Doctrine\DBAL\DriverManager;
+use Doctrine\ORM\EntityManager;
+use Doctrine\ORM\ORMSetup;
 use Monolog\Handler\StreamHandler;
 use Monolog\Logger;
 use Monolog\Processor\UidProcessor;
@@ -25,6 +28,17 @@ return function (ContainerBuilder $containerBuilder) {
             $logger->pushHandler($handler);
 
             return $logger;
+        },
+        EntityManager::class => function (ContainerInterface $c) {
+            $settings = $c->get(SettingsInterface::class)->get('doctrine');
+            $is_dev = $settings['dev_mode'];
+
+            $config = ORMSetup::createAttributeMetadataConfiguration([$settings['metadata_dirs']], $is_dev);
+
+
+            $conn = DriverManager::getConnection($settings['connection']);
+
+            return new EntityManager($conn, $config);
         },
     ]);
 };

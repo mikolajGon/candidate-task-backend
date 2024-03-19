@@ -24,11 +24,7 @@ class CreateGuideAction extends GuideAction
 
         $this->logger->info("Guide of id `{$guideContext->getGuideId()}` was created.");
 
-        $response = array_map(function (Content $content) use ($guideContext) {
-            return GuideDto::fromContent($guideContext->getGuideId(), $content);
-        }, (array)$guideContext->getAllContent());
 
-
-        return $this->respondWithData($response, 201);
+        return $this->respondWithData(null, 201);
     }
 }
