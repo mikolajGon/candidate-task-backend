@@ -41,7 +41,8 @@ class PostgresGuideRepository implements GuideRepository, ContentRepository
         $contentEntity = new ContentEntity(
             $content->getTitle(),
             $content->getLanguage()->value,
-            $content->getGuideId()
+            $content->getGuideId(),
+            count($content->getSteps())
         );
 
         $this->entityManager->persist($contentEntity);

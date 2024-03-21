@@ -17,14 +17,19 @@ class CreateGuideAction extends GuideAction
     {
 
         $guideBody = $this->getFormData();
-        $steps = array_map(function (array $steps){
+        $steps = array_map(function (array $steps) {
             return new ContentStep($steps['title'], $steps['content']);
-        },$guideBody['steps']);
+        }, $guideBody['steps']);
+
         $guideContext = $this->guideApi->createGuideContext($guideBody['title'], Language::from($guideBody['language']), $steps);
 
         $this->logger->info("Guide of id `{$guideContext->getGuideId()}` was created.");
 
+        $response = array_map(function (Content $content) use ($guideContext) {
+            return GuideDto::fromContent($guideContext->getGuideId(), $content);
+        }, $guideContext->getAllContent());
 
-        return $this->respondWithData(null, 201);
+
+        return $this->respondWithData($response, 201);
     }
 }

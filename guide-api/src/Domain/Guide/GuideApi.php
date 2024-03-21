@@ -8,19 +8,18 @@ use App\Domain\Guide\Models\Language;
 
 class GuideApi
 {
-    private GuideRepository $guideRepository;
-    private ContentRepository $contentRepository;
 
-    public function __construct(GuideRepository $guideRepository, ContentRepository $contentRepository)
+    public function __construct(
+        private readonly GuideRepository        $guideRepository,
+        private readonly ContentRepository      $contentRepository,
+        private readonly GuideContentRepository $guideContentRepository)
     {
-        $this->guideRepository = $guideRepository;
-        $this->contentRepository = $contentRepository;
     }
 
     public function getGuideContext(int $id): GuideContext
     {
         $guide = $this->guideRepository->getGuide($id);
-        return new GuideContext($guide, $this->guideRepository, $this->contentRepository);
+        return new GuideContext($guide, $this->contentRepository, $this->guideContentRepository);
     }
 
     /**
@@ -34,7 +33,7 @@ class GuideApi
         $guide = $this->guideRepository->createGuide();
         $this->contentRepository->createContent(new Content($guide->getId(), $language, $title, $content));
 
-        return new GuideContext($guide, $this->guideRepository, $this->contentRepository);
+        return new GuideContext($guide, $this->contentRepository, $this->guideContentRepository);
     }
 
 

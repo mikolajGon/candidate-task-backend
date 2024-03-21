@@ -27,20 +27,23 @@ final class ContentEntity
     private string $language;
     #[Column(name: 'guide_id', type: 'integer', nullable: false)]
     private int $guideId;
+    #[Column(name: 'step_count', type: 'integer', nullable: false)]
+    private int $stepCount;
 
     /**
      *
      * @var Collection<int, ContentStepEntity>
      */
-    #[OneToMany(targetEntity: ContentStepEntity::class, mappedBy: 'contentProperties')]
+    #[OneToMany(targetEntity: ContentStepEntity::class, mappedBy: 'contentProperties', cascade: ["persist"], orphanRemoval: true)]
     private Collection $steps;
 
-    public function __construct(string $title, string $language, int $guideId)
+    public function __construct(string $title, string $language, int $guideId, int $stepCount)
     {
         $this->steps = new ArrayCollection();
         $this->title = $title;
         $this->language = $language;
         $this->guideId = $guideId;
+        $this->stepCount = $stepCount;
     }
 
     /**

@@ -8,15 +8,12 @@ use App\Domain\Guide\Models\Language;
 
 class GuideContext
 {
-    private Guide $guide;
-    private GuideRepository $guideRepository;
-    private ContentRepository $contentRepository;
 
-    public function __construct(Guide $guide, GuideRepository $guideRepository, ContentRepository $contentRepository)
+    public function __construct(
+        private readonly Guide                  $guide,
+        private readonly ContentRepository      $contentRepository,
+        private readonly GuideContentRepository $guideContentRepository)
     {
-        $this->guide = $guide;
-        $this->guideRepository = $guideRepository;
-        $this->contentRepository = $contentRepository;
     }
 
     /**
@@ -54,4 +51,8 @@ class GuideContext
     {
     }
 
+    public function delete(int $guideId): void
+    {
+        $this->guideContentRepository->removeAll($guideId);
+    }
 }

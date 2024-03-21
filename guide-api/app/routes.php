@@ -3,6 +3,7 @@
 declare(strict_types=1);
 
 use App\Application\Actions\Guide\CreateGuideAction;
+use App\Application\Actions\Guide\DeleteGuideAction;
 use App\Application\Actions\Guide\GetGuideAction;
 use Psr\Http\Message\ResponseInterface as Response;
 use Psr\Http\Message\ServerRequestInterface as Request;
@@ -24,7 +25,7 @@ return function (App $app) {
     $app->group('/guides', function (Group $group) {
         $group->post('/', CreateGuideAction::class);
         $group->get('/{id}', GetGuideAction::class);
-//        $group->delete('/{id}', ViewUserAction::class);
+        $group->delete('/{id}', DeleteGuideAction::class);
 //        $group->patch('/{id}', ViewUserAction::class);
 //        $group->post('/auto-translate/{id}', ViewUserAction::class);
     });
