@@ -6,7 +6,7 @@ namespace App\Infrastructure\Persistence\Postgres;
 
 use App\Domain\DomainException\DomainInfrastructureException;
 use App\Domain\Guide\Models\Content;
-use App\Domain\Guide\Models\ContentStep;
+use App\Domain\Guide\Models\Language;
 use App\Domain\Guide\Ports\ContentRepository;
 use App\Infrastructure\Persistence\Postgres\Entity\ContentEntity;
 use App\Infrastructure\Persistence\Postgres\Entity\ContentStepEntity;
@@ -88,6 +88,31 @@ class PostgresContentRepository implements ContentRepository
 
             $this->entityManager->commit();
             $this->entityManager->clear();
+
+            return $content;
+        } catch (ORMException $e) {
+            $this->logger->error($e->getMessage());
+            throw new DomainInfrastructureException();
+        }
+    }
+
+    function getContent(int $guideId, Language $language): Content|null
+    {
+        $contentEntity = $this->contentRepository->findOneBy(['guideId' => $guideId, 'language' => $language->value]);
+        if (!isset($contentEntity)) {
+            return null;
+        };
+
+        return $contentEntity->toContent();
+    }
+
+    function createContent(Content $content): Content
+    {
+        try {
+            $contentEntity = ContentEntity::fromContent($content);
+
+            $this->entityManager->persist($contentEntity);
+            $this->entityManager->flush();
 
             return $content;
         } catch (ORMException $e) {

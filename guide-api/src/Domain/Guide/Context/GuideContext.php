@@ -10,14 +10,19 @@ use App\Domain\Guide\Models\ContentStep;
 use App\Domain\Guide\Models\Guide;
 use App\Domain\Guide\Models\Language;
 use App\Domain\Guide\Ports\ContentRepository;
+use App\Domain\Guide\Ports\ContentStepRepository;
 use App\Domain\Guide\Ports\GuideContentRepository;
+use App\Domain\Guide\Services\TranslationService;
+use Closure;
 
 class GuideContext
 {
+    private readonly TranslationService $translationService;
 
     public function __construct(
         private readonly Guide                  $guide,
         private readonly ContentRepository      $contentRepository,
+        private readonly ContentStepRepository  $contentStepRepository,
         private readonly GuideContentRepository $guideContentRepository)
     {
     }
@@ -28,8 +33,7 @@ class GuideContext
     }
 
     /**
-     * @throws DomainInfrastructureException
-     * @throws IncorrectContentException
+     * @throws DomainInfrastructureException | IncorrectContentException
      */
     public function updateContent(Content $content): Content
     {
@@ -45,21 +49,16 @@ class GuideContext
         return $this->contentRepository->updateContent($content);
     }
 
-    public function getContent(Language $language): void
-    {
-    }
-
     /**
-     * @return ContentStep[]
-     * @throws GuideNotFoundException
+     * @return Content[]
      */
     public function getAllContent(): array
     {
-        return $this->contentRepository->getAllContent($this->guide->getId());
-    }
+        $allContent = $this->contentRepository->getAllContent($this->guide->getId());
 
-    public function createTranslation(Language $language)
-    {
+        return array_filter($allContent, function (Content $content) {
+            return count($content->getSteps()) == $this->guide->getContentLength();
+        });
     }
 
     /**
@@ -73,8 +72,7 @@ class GuideContext
     /**
      * @param Content[] $contents
      * @return Content[]
-     * @throws IncorrectContentException
-     * @throws DomainInfrastructureException
+     * @throws IncorrectContentException | DomainInfrastructureException | GuideNotFoundException
      */
     public function replaceContent(array $contents): array
     {
@@ -100,5 +98,34 @@ class GuideContext
         $this->guide->setContentLength($contentStepsCount);
 
         return $this->guideContentRepository->replaceGuideContent($this->guide, $contents);
+    }
+
+    /**
+     * @throws IncorrectContentException
+     */
+    public function isReady(Content $content): bool
+    {
+        if ($content->getGuideId() != $this->getGuideId()) {
+            throw new IncorrectContentException('This content do not belong to this guide');
+        }
+
+        return count($content) == $this->guide->getContentLength();
+    }
+
+    public function getContent(Language $language): Content|null
+    {
+        return $this->contentRepository->getContent($this->getGuideId(), $language);
+    }
+
+    /**
+     * @throws DomainInfrastructureException
+     */
+    public function createNotReadyContent(Content $content): callable
+    {
+        $this->contentRepository->createContent($content);
+
+        return function (ContentStep $contentStep, int $order) use ($content) {
+            $this->contentStepRepository->add($contentStep, $order, $content->getGuideId(), $content->getLanguage());
+        };
     }
 }

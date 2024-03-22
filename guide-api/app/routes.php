@@ -5,6 +5,7 @@ declare(strict_types=1);
 use App\Application\Actions\Guide\CreateGuideAction;
 use App\Application\Actions\Guide\DeleteGuideAction;
 use App\Application\Actions\Guide\GetGuideAction;
+use App\Application\Actions\Guide\TranslateGuideContentAction;
 use App\Application\Actions\Guide\UpdateGuideAction;
 use App\Application\Actions\Guide\UpdateGuideContentAction;
 use Psr\Http\Message\ResponseInterface as Response;
@@ -34,6 +35,7 @@ return function (App $app) {
         $group->post('/', CreateGuideAction::class);
         $group->get('/{id}', GetGuideAction::class);
         $group->delete('/{id}', DeleteGuideAction::class);
+        $group->patch('/{id}/auto-translate', TranslateGuideContentAction::class);
         // This one in this API design actually represents something like PATCH on resource in standard REST
         $group->put('/{id}/content/{language}', UpdateGuideContentAction::class);
         /**
@@ -52,6 +54,5 @@ return function (App $app) {
          */
         $group->put('/{id}', UpdateGuideAction::class);
 
-//        $group->post('/auto-translate/{id}', ViewUserAction::class);
     });
 };

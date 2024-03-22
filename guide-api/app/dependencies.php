@@ -12,6 +12,8 @@ use Monolog\Logger;
 use Monolog\Processor\UidProcessor;
 use Psr\Container\ContainerInterface;
 use Psr\Log\LoggerInterface;
+use PhpAmqpLib\Connection\AMQPStreamConnection;
+use PhpAmqpLib\Channel\AMQPChannel;
 
 return function (ContainerBuilder $containerBuilder) {
     $containerBuilder->addDefinitions([
@@ -40,5 +42,16 @@ return function (ContainerBuilder $containerBuilder) {
 
             return new EntityManager($conn, $config);
         },
+
+        AMQPChannel::class => function () {
+            $connection = new AMQPStreamConnection(
+                "localhost",
+                5672,
+                'guest',
+                'guest',
+                '/');
+
+            return $connection->channel();
+        }
     ]);
 };
