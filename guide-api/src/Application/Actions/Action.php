@@ -4,16 +4,17 @@ declare(strict_types=1);
 
 namespace App\Application\Actions;
 
+use App\Domain\DomainException\DomainInfrastructureException;
 use App\Domain\DomainException\DomainRecordNotFoundException;
 use Psr\Http\Message\ResponseInterface as Response;
 use Psr\Http\Message\ServerRequestInterface as Request;
 use Psr\Log\LoggerInterface;
 use Slim\Exception\HttpBadRequestException;
+use Slim\Exception\HttpInternalServerErrorException;
 use Slim\Exception\HttpNotFoundException;
 
 abstract class Action
 {
-    protected LoggerInterface $logger;
 
     protected Request $request;
 
@@ -21,9 +22,8 @@ abstract class Action
 
     protected array $args;
 
-    public function __construct(LoggerInterface $logger)
+    public function __construct(protected readonly LoggerInterface $logger)
     {
-        $this->logger = $logger;
     }
 
     /**
@@ -40,28 +40,32 @@ abstract class Action
             return $this->action();
         } catch (DomainRecordNotFoundException $e) {
             throw new HttpNotFoundException($this->request, $e->getMessage());
+        } catch (DomainInfrastructureException $e) {
+            $this->logger->error($e);
+            throw new HttpInternalServerErrorException($this->request, 'Something went wrong');
         }
     }
 
     /**
      * @throws DomainRecordNotFoundException
-     * @throws HttpBadRequestException
+     * @throws DomainInfrastructureException
      */
     abstract protected function action(): Response;
 
     /**
      * @return array|object
      */
-    protected function getFormData()
+    protected function getFormData(): object|array
     {
         return $this->request->getParsedBody();
     }
 
     /**
+     * @param string $name
      * @return mixed
      * @throws HttpBadRequestException
      */
-    protected function resolveArg(string $name)
+    protected function resolveArg(string $name): mixed
     {
         if (!isset($this->args[$name])) {
             throw new HttpBadRequestException($this->request, "Could not resolve argument `{$name}`.");
@@ -71,9 +75,9 @@ abstract class Action
     }
 
     /**
-     * @param array|object|null $data
+     * @param object|array|null $data
      */
-    protected function respondWithData($data = null, int $statusCode = 200): Response
+    protected function respondWithData(object|array $data = null, int $statusCode = 200): Response
     {
         $payload = new ActionPayload($statusCode, $data);
 

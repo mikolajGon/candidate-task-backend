@@ -1,15 +1,15 @@
 CREATE TABLE guides
 (
-    id SERIAL PRIMARY KEY
+    id         SERIAL PRIMARY KEY,
+    content_length int NOT NULL
 );
 
 CREATE TABLE contents
 (
-    id         SERIAL PRIMARY KEY,
-    title      varchar NOT NULL,
-    language   varchar NOT NULL,
-    step_count int     NOT NULL,
-    guide_id   int     NOT NULL
+    id       SERIAL PRIMARY KEY,
+    title    varchar NOT NULL,
+    language varchar NOT NULL,
+    guide_id int     NOT NULL
 );
 
 CREATE TABLE content_steps

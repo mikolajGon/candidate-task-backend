@@ -2,9 +2,14 @@
 
 namespace App\Domain\Guide;
 
-use App\Domain\Guide\Models\Content;
+use App\Domain\DomainException\DomainInfrastructureException;
+use App\Domain\Guide\Context\GuideContext;
+use App\Domain\Guide\Exceptions\GuideNotFoundException;
 use App\Domain\Guide\Models\ContentStep;
 use App\Domain\Guide\Models\Language;
+use App\Domain\Guide\Ports\ContentRepository;
+use App\Domain\Guide\Ports\GuideContentRepository;
+use App\Domain\Guide\Ports\GuideRepository;
 
 class GuideApi
 {
@@ -16,6 +21,10 @@ class GuideApi
     {
     }
 
+    /**
+     * @throws DomainInfrastructureException
+     * @throws GuideNotFoundException
+     */
     public function getGuideContext(int $id): GuideContext
     {
         $guide = $this->guideRepository->getGuide($id);
@@ -27,12 +36,11 @@ class GuideApi
      * @param Language $language
      * @param ContentStep[] $content
      * @return GuideContext
+     * @throws DomainInfrastructureException
      */
     public function createGuideContext(string $title, Language $language, array $content): GuideContext
     {
-        $guide = $this->guideRepository->createGuide();
-        $this->contentRepository->createContent(new Content($guide->getId(), $language, $title, $content));
-
+        $guide = $this->guideContentRepository->create($title, $language, $content);
         return new GuideContext($guide, $this->contentRepository, $this->guideContentRepository);
     }
 

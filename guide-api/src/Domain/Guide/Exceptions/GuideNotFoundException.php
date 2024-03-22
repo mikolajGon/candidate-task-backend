@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace App\Domain\Guide;
+namespace App\Domain\Guide\Exceptions;
 
 use App\Domain\DomainException\DomainRecordNotFoundException;
 

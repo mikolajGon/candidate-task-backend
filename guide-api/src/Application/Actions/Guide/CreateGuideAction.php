@@ -5,6 +5,8 @@ declare(strict_types=1);
 namespace App\Application\Actions\Guide;
 
 use App\Application\Actions\Guide\Dto\GuideDto;
+use App\Domain\DomainException\DomainInfrastructureException;
+use App\Domain\Guide\Exceptions\GuideNotFoundException;
 use App\Domain\Guide\Models\Content;
 use App\Domain\Guide\Models\ContentStep;
 use App\Domain\Guide\Models\Language;
@@ -13,9 +15,13 @@ use Psr\Http\Message\ResponseInterface as Response;
 class CreateGuideAction extends GuideAction
 {
 
+    /**
+     * @throws DomainInfrastructureException
+     * @throws GuideNotFoundException
+     */
     protected function action(): Response
     {
-
+        // Since it is POC we assume request validation exist
         $guideBody = $this->getFormData();
         $steps = array_map(function (array $steps) {
             return new ContentStep($steps['title'], $steps['content']);

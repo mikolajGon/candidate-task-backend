@@ -6,18 +6,26 @@ namespace App\Domain\Guide\Models;
 
 class Guide
 {
-    private readonly int $id;
 
-    public function __construct(int $id)
+    public function __construct(
+        private readonly int $id,
+        private int $contentLength
+    )
     {
-        $this->id = $id;
     }
 
-    /**
-     * @return int
-     */
     public function getId(): int
     {
         return $this->id;
+    }
+
+    public function getContentLength(): int
+    {
+        return $this->contentLength;
+    }
+
+    public function setContentLength(int $contentLength): void
+    {
+        $this->contentLength = $contentLength;
     }
 }

@@ -6,24 +6,16 @@ namespace App\Domain\Guide\Models;
 
 class Content
 {
-    private int $guideId;
-    private Language $language;
-    private string $title;
-    /**
-     * @var ContentStep[]
-     */
-    private array $steps;
 
-
-    /**
-     * @param ContentStep[] $steps
-     */
-    public function __construct(int $guideId, Language $language, string $title, array $steps)
+    public function __construct(
+        private readonly int $guideId,
+        private readonly Language $language,
+        private readonly string $title,
+        /**
+         * @var ContentStep[]
+         */
+        private readonly array $steps)
     {
-        $this->guideId = $guideId;
-        $this->language = $language;
-        $this->title = $title;
-        $this->steps = $steps;
     }
 
     /**

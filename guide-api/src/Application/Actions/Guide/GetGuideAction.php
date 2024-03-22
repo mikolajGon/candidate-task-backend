@@ -12,7 +12,7 @@ class GetGuideAction extends GuideAction {
 
     protected function action(): Response
     {
-
+        // Since it is POC we assume request validation exist
         $guideId = (int) $this->resolveArg('id');
         $guide = $this->guideApi->getGuideContext($guideId);
 

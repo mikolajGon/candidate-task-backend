@@ -1,0 +1,83 @@
+
+POST http://localhost:8080/guides/
+Content-Type: application/json
+
+{
+  "language": "Pl",
+  "title": "Ładny Przewodnik",
+  "steps": [
+    {
+      "title": "krok 1",
+      "content": "jakas tresc"
+    },
+    {
+      "title": "krok 2",
+      "content": "jakas inna tresc"
+    }
+  ]
+}
+
+> {%
+  client.global.set("guide_id", response.body.data[0].id);
+%}
+
+
+###
+GET http://localhost:8080/guides/{{guide_id}}
+Accept: application/json
+###
+
+PUT http://localhost:8080/guides/{{guide_id}}/content/It
+Content-Type: application/json
+
+{
+  "title": "Una bella guida",
+  "steps": [{
+    "title": "passo 1",
+    "content": "del contenuto"
+  },{
+    "title": "passo 2",
+    "content": "dell'altro contenuto"
+  }]
+}
+
+###
+PUT http://localhost:8080/guides/{{guide_id}}
+Content-Type: application/json
+
+[{
+  "language": "Pl",
+  "title": "Ładny Przewodnik",
+  "steps": [
+    {
+      "title": "krok 1",
+      "content": "jakas tresc"
+    },
+    {
+      "title": "krok 2",
+      "content": "jakas inna tresc"
+    },
+    {
+      "title": "krok 2",
+      "content": "jakas inna tresc"
+    }
+  ]
+},{
+  "language": "It",
+  "title": "Una bella guida",
+  "steps": [{
+    "title": "passo 1",
+    "content": "del contenuto"
+  },{
+    "title": "passo 2",
+    "content": "dell'altro contenuto"
+  },{
+    "title": "passo 2",
+    "content": "dell'altro contenuto"
+  }]
+}]
+###
+DELETE http://localhost:8080/guides/{{guide_id}}
+Accept: application/json
+
+

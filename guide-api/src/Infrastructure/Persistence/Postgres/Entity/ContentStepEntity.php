@@ -41,4 +41,20 @@ final class ContentStepEntity
         return new ContentStep($this->title, $this->content);
     }
 
+    /**
+     * @param string $title
+     */
+    public function setTitle(string $title): void
+    {
+        $this->title = $title;
+    }
+
+    /**
+     * @param string $content
+     */
+    public function setContent(string $content): void
+    {
+        $this->content = $content;
+    }
+
 }
