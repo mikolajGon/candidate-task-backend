@@ -4,29 +4,27 @@ namespace App\Infrastructure\Queue\RabbitMQ;
 
 use App\Domain\Guide\Models\Language;
 use App\Domain\Guide\Ports\TranslationScheduler;
-use PhpAmqpLib\Channel\AMQPChannel;
+use PhpAmqpLib\Connection\AMQPStreamConnection;
 use PhpAmqpLib\Message\AMQPMessage;
 
 class RabbitMqTranslationProducer implements TranslationScheduler
 {
-    /**
-     * @param AMQPChannel $channel
-     */
-    public function __construct(private readonly AMQPChannel $channel)
+    public function __construct(private readonly AMQPStreamConnection $connection)
     {
     }
 
     function scheduleTranslation(int $guideId, Language $language): void
     {
+        $channel = $this->connection->channel();
         $queuedMessage = ['guideId' => $guideId, 'language' => $language->value];
-        $this->channel->queue_declare('translation', false, true, false, false);
+        $channel->queue_declare('translation', false, true, false, false);
         $newMessage = new AMQPMessage(
             json_encode($queuedMessage),
             array('delivery_mode' => 2)
         );
 
-        $this->channel->basic_publish($newMessage, '', 'translation');
+        $channel->basic_publish($newMessage, '', 'translation');
 
-        $this->channel->close();
+        $channel->close();
     }
 }

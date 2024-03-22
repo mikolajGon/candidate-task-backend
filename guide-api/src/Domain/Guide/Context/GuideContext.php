@@ -12,12 +12,9 @@ use App\Domain\Guide\Models\Language;
 use App\Domain\Guide\Ports\ContentRepository;
 use App\Domain\Guide\Ports\ContentStepRepository;
 use App\Domain\Guide\Ports\GuideContentRepository;
-use App\Domain\Guide\Services\TranslationService;
-use Closure;
 
 class GuideContext
 {
-    private readonly TranslationService $translationService;
 
     public function __construct(
         private readonly Guide                  $guide,
@@ -51,13 +48,14 @@ class GuideContext
 
     /**
      * @return Content[]
+     * @throws IncorrectContentException
      */
     public function getAllContent(): array
     {
         $allContent = $this->contentRepository->getAllContent($this->guide->getId());
 
         return array_filter($allContent, function (Content $content) {
-            return count($content->getSteps()) == $this->guide->getContentLength();
+            return $this->isReady($content);
         });
     }
 
@@ -109,7 +107,7 @@ class GuideContext
             throw new IncorrectContentException('This content do not belong to this guide');
         }
 
-        return count($content) == $this->guide->getContentLength();
+        return count($content->getSteps()) == $this->guide->getContentLength();
     }
 
     public function getContent(Language $language): Content|null

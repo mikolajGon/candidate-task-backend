@@ -18,7 +18,7 @@ class TranslationService
 {
 
     public function __construct(
-        private readonly LoggerInterface $logger,
+        private readonly LoggerInterface      $logger,
         private readonly TranslationScheduler $translationScheduler,
         private readonly TranslationProvider  $translationProvider
     )
@@ -57,8 +57,7 @@ class TranslationService
         $anyContent = $guideContext->getAllContent()[0];
 
         if (!isset($anyContent)) {
-
-            throw new IncorrectContentException("Guide: " . $guideContext->getGuideId() . " do not have any content to translate from");
+            return;
         }
 
         $translation = $this->translationProvider->translate(content: [$anyContent->getTitle()], languageTo: $language, languageFrom: $anyContent->getLanguage());
@@ -69,7 +68,7 @@ class TranslationService
             try {
                 $addStepToContentFunc(new ContentStep($translation[0], $translation[1]), $index + 1);
             } catch (ContentNotFoundException $e) {
-                $this->logger->warning('Content manipulated during translation GuideId: '.$guideContext->getGuideId()." language: ".$language->value);
+                $this->logger->warning('Content manipulated during translation GuideId: ' . $guideContext->getGuideId() . " language: " . $language->value);
                 break;
             }
         }

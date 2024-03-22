@@ -46,7 +46,7 @@ PATCH http://localhost:8080/guides/{{guide_id}}/auto-translate
 Content-Type: application/json
 
 {
-  "languages": ["De"]
+  "languages": ["Fr", "En"]
 }
 
 ###

@@ -18,7 +18,7 @@ class PostgresGuideRepository implements GuideRepository
 
     public function __construct(
         protected readonly LoggerInterface $logger,
-        EntityManager                      $entityManager,
+        private readonly EntityManager     $entityManager,
     )
     {
         $this->guideRepository = $entityManager->getRepository(GuideEntity::class);
@@ -31,9 +31,11 @@ class PostgresGuideRepository implements GuideRepository
     public function getGuide(int $id): Guide
     {
         $guideEntity = $this->guideRepository->find($id);
-        if ($guideEntity === null) {
-            throw new GuideNotFoundException();
-        }
+        $this->entityManager->refresh($guideEntity);
+        if($guideEntity === null){
+        throw new GuideNotFoundException();
+    }
+
         return new Guide($guideEntity->getId(), $guideEntity->getContentLength());
     }
 }

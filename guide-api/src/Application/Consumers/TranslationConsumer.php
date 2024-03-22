@@ -7,21 +7,21 @@ use App\Domain\Guide\GuideApi;
 use App\Domain\Guide\Models\Language;
 use App\Domain\Guide\Services\TranslationService;
 use PhpAmqpLib\Channel\AMQPChannel;
+use PhpAmqpLib\Connection\AMQPStreamConnection;
 use Symfony\Component\Console\Output\OutputInterface;
 
 class TranslationConsumer
 {
-    /**
-     * @param AMQPChannel $channel
-     * @param OutputInterface $output
-     */
+    private readonly AMQPChannel $channel;
+
     public function __construct(
-        private readonly AMQPChannel        $channel,
-        private readonly OutputInterface    $output,
-        private readonly GuideApi           $guideApi,
-        private readonly TranslationService $translationService,
+        AMQPStreamConnection $connection,
+        private readonly OutputInterface      $output,
+        private readonly GuideApi             $guideApi,
+        private readonly TranslationService   $translationService,
     )
     {
+        $this->channel = $connection->channel();
     }
 
     public function listen(): void
@@ -37,13 +37,13 @@ class TranslationConsumer
                 $this->output->writeln("Consuming message: {$message->body}");
                 $decodedMessage = json_decode($message->body, true);
 
-                $channel = $message->delivery_info['channel'];
-                $channel->basic_ack($message->delivery_info['delivery_tag']);
-
                 //in here we should have some more extensive error handler
                 // eg. consumer should take care of guideId not existing, but errors of translation should be handled
                 $guideContext = $this->guideApi->getGuideContext($decodedMessage['guideId']);
                 $this->translationService->translate($guideContext, Language::from($decodedMessage['language']));
+
+                $channel = $message->delivery_info['channel'];
+                $channel->basic_ack($message->delivery_info['delivery_tag']);
             }
         );
 

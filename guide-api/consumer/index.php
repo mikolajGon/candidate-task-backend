@@ -5,7 +5,7 @@ use App\Application\Consumers\TranslationConsumer;
 use App\Domain\Guide\GuideApi;
 use App\Domain\Guide\Services\TranslationService;
 use DI\ContainerBuilder;
-use PhpAmqpLib\Channel\AMQPChannel;
+use PhpAmqpLib\Connection\AMQPStreamConnection;
 use Symfony\Component\Console\Output\ConsoleOutput;
 
 require __DIR__ . '/../vendor/autoload.php';
@@ -26,7 +26,7 @@ $dependencies = require __DIR__ . '/../app/dependencies.php';
 $dependencies($containerBuilder);
 
 // Set up repositories
-$repositories = require __DIR__ . '/../app/repositories.php';
+$repositories = require __DIR__ . '/../app/adapters.php';
 $repositories($containerBuilder);
 
 // Build PHP-DI Container instance
@@ -35,7 +35,7 @@ $container = $containerBuilder->build();
 $output = new ConsoleOutput();
 
 $consumer = new TranslationConsumer(
-    $container->get(AMQPChannel::class),
+    $container->get(AMQPStreamConnection::class),
     $output,
     $container->get(GuideApi::class),
     $container->get(TranslationService::class)

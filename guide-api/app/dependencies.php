@@ -43,15 +43,13 @@ return function (ContainerBuilder $containerBuilder) {
             return new EntityManager($conn, $config);
         },
 
-        AMQPChannel::class => function () {
-            $connection = new AMQPStreamConnection(
+        AMQPStreamConnection::class => function () {
+            return new AMQPStreamConnection(
                 "localhost",
                 5672,
                 'guest',
                 'guest',
                 '/');
-
-            return $connection->channel();
         }
     ]);
 };
