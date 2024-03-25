@@ -11,7 +11,6 @@ use App\Domain\Guide\Ports\ContentRepository;
 use App\Domain\Guide\Ports\ContentStepRepository;
 use App\Domain\Guide\Ports\GuideContentRepository;
 use App\Domain\Guide\Ports\GuideRepository;
-use App\Domain\Guide\Ports\TranslationScheduler;
 
 class GuideApi
 {
@@ -20,8 +19,7 @@ class GuideApi
         private readonly GuideRepository        $guideRepository,
         private readonly ContentRepository      $contentRepository,
         private readonly ContentStepRepository  $contentStepRepository,
-        private readonly GuideContentRepository $guideContentRepository,
-        private readonly TranslationScheduler   $translationScheduler,)
+        private readonly GuideContentRepository $guideContentRepository)
     {
     }
 
@@ -32,7 +30,7 @@ class GuideApi
     public function getGuideContext(int $id): GuideContext
     {
         $guide = $this->guideRepository->getGuide($id);
-        return new GuideContext($guide, $this->contentRepository, $this->contentStepRepository, $this->guideContentRepository, $this->translationScheduler);
+        return new GuideContext($guide, $this->contentRepository, $this->contentStepRepository, $this->guideContentRepository);
     }
 
     /**
@@ -45,7 +43,7 @@ class GuideApi
     public function createGuideContext(string $title, Language $language, array $content): GuideContext
     {
         $guide = $this->guideContentRepository->create($title, $language, $content);
-        return new GuideContext($guide, $this->contentRepository, $this->contentStepRepository, $this->guideContentRepository, $this->translationScheduler);
+        return new GuideContext($guide, $this->contentRepository, $this->contentStepRepository, $this->guideContentRepository);
     }
 
 
