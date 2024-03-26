@@ -6,6 +6,7 @@ namespace App\Application\Handlers;
 
 use App\Application\Actions\ActionError;
 use App\Application\Actions\ActionPayload;
+use App\Domain\DomainException\DomainInfrastructureException;
 use Psr\Http\Message\ResponseInterface as Response;
 use Slim\Exception\HttpBadRequestException;
 use Slim\Exception\HttpException;
@@ -52,6 +53,7 @@ class HttpErrorHandler extends SlimErrorHandler
 
         if (
             !($exception instanceof HttpException)
+            && !($exception instanceof DomainInfrastructureException)
             && $exception instanceof Throwable
             && $this->displayErrorDetails
         ) {

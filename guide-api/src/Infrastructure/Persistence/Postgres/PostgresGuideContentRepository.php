@@ -58,9 +58,9 @@ class PostgresGuideContentRepository implements GuideContentRepository
                     $contentStep->getContent(),
                     $contentEntity,
                     $index + 1));
-                $this->entityManager->flush();
             }
 
+            $this->entityManager->flush();
             $this->entityManager->commit();
             $this->entityManager->clear();
 
