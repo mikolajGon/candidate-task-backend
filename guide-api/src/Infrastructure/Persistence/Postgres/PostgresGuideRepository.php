@@ -34,10 +34,10 @@ class PostgresGuideRepository implements GuideRepository
     {
         try {
             $guideEntity = $this->guideRepository->find($id);
-            $this->entityManager->refresh($guideEntity);
             if ($guideEntity === null) {
                 throw new GuideNotFoundException();
             }
+            $this->entityManager->refresh($guideEntity);
 
             return new Guide($guideEntity->getId(), $guideEntity->getContentLength());
 

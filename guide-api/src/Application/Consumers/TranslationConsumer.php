@@ -3,6 +3,9 @@
 namespace App\Application\Consumers;
 
 
+use App\Domain\DomainException\DomainInfrastructureException;
+use App\Domain\Guide\Exceptions\GuideNotFoundException;
+use App\Domain\Guide\Exceptions\IncorrectContentException;
 use App\Domain\Guide\GuideApi;
 use App\Domain\Guide\Models\Language;
 use App\Domain\Guide\Services\TranslationService;
@@ -38,9 +41,13 @@ class TranslationConsumer
                 $decodedMessage = json_decode($message->body, true);
 
                 //in here we should have some more extensive error handler
-                // eg. consumer should take care of guideId not existing, but errors of translation should be handled
-                $guideContext = $this->guideApi->getGuideContext($decodedMessage['guideId']);
-                $this->translationService->translate($guideContext, Language::from($decodedMessage['language']));
+                // eg. sending to DLQ, retrier mechanism, etc
+                try {
+                    $guideContext = $this->guideApi->getGuideContext($decodedMessage['guideId']);
+                    $this->translationService->translate($guideContext, Language::from($decodedMessage['language']));
+                } catch ( DomainInfrastructureException|GuideNotFoundException|IncorrectContentException $e ) {
+                    $this->output->writeln($e->getMessage());
+                }
 
                 $channel = $message->delivery_info['channel'];
                 $channel->basic_ack($message->delivery_info['delivery_tag']);
